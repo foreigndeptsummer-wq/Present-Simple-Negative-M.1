@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Krathong Negatives</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&family=Mitr:wght@400;500&display=swap">
+<style>
+:root{
+  /* Layout: one night-river game column. Header strip, a row of ten krathong lights as progress, one card at a time. */
+  --bg:#0e1633;
+  --water:#15224f;
+  --card:#1a2a5c;
+  --card2:#233671;
+  --line:#3d528f;
+  --fg:#f6f0e2;
+  --muted:#b9c1de;
+  --flame:#ffb73d;
+  --flame-ink:#2b1a00;
+  --leaf:#8fd694;
+  --lotus:#ff94ad;
+  --good:#8fe0a3;
+  --display:'Mitr','Noto Sans Thai',system-ui,sans-serif;
+  --body:'Mali','Noto Sans Thai',system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 8%,rgba(255,246,220,.85),transparent 60%),
+    radial-gradient(1px 1px at 78% 14%,rgba(255,246,220,.7),transparent 60%),
+    radial-gradient(1.5px 1.5px at 44% 22%,rgba(255,246,220,.6),transparent 60%),
+    radial-gradient(1px 1px at 91% 38%,rgba(255,246,220,.6),transparent 60%),
+    radial-gradient(1px 1px at 28% 44%,rgba(255,246,220,.5),transparent 60%),
+    linear-gradient(180deg,#0a1129 0,var(--bg) 520px);
+  background-repeat:no-repeat;
+  background-size:100% 520px;
+  background-position:top;
+  color:var(--fg);
+  font-family:var(--body);
+  font-size:18px;
+  line-height:1.6;
+}
+.wrap{
+  max-width:880px;margin:0 auto;
+  padding-block:18px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.3;margin:0;text-wrap:balance}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--flame);outline-offset:3px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:10px;background:none;border:0;padding:4px;cursor:pointer;font-family:var(--display);font-size:20px;color:var(--fg)}
+.kr-mark{width:36px;height:36px;--flame-o:1}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+
+/* buttons */
+.btn{font-family:var(--display);font-weight:400;border:0;border-radius:999px;padding:12px 24px;min-height:48px;cursor:pointer;font-size:18px;transition:transform .12s,filter .12s}
+.btn:hover:not([disabled]){filter:brightness(1.08);transform:translateY(-1px)}
+.btn.primary{background:var(--flame);color:var(--flame-ink)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--fg)}
+.btn.sm{padding:8px 16px;min-height:40px;font-size:16px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+
+/* home */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:center;margin-bottom:28px}
+.hero h1{font-size:clamp(30px,6.4vw,46px)}
+.hero p.lead{margin-top:12px;color:var(--muted);max-width:34em}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{font-family:var(--display);font-size:14px;padding:4px 12px;border-radius:999px;border:1.5px solid var(--line);color:var(--muted)}
+.scene{width:100%;height:auto;display:block}
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:28px}
+.lvl{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.lvl .tag{font-family:var(--display);font-size:14px;color:var(--flame);letter-spacing:.06em}
+.lvl h2{font-size:24px}
+.lvl p{color:var(--muted)}
+.lvl .meta{font-size:15px}
+.lvl .btn{align-self:flex-start;margin-top:auto}
+.sec-title{font-size:22px;margin-bottom:12px}
+.formula{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.rule{background:var(--water);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.rule .who{font-size:15px;color:var(--muted)}
+.eq{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0;font-family:var(--display);font-size:18px}
+.tk{background:var(--card2);border-radius:10px;padding:4px 12px}
+.tk.neg{background:var(--flame);color:var(--flame-ink)}
+.op{color:var(--muted)}
+.rule .eg{font-family:var(--display);font-size:19px}
+.note-line{margin-top:14px;color:var(--muted);font-size:16px}
+
+/* progress river */
+.lvl-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.lvl-head h2{font-size:clamp(22px,5vw,28px)}
+.count{font-family:var(--display);color:var(--muted);font-size:16px}
+.river{display:flex;justify-content:space-between;align-items:flex-end;gap:2px;padding:14px 4px 0;border-bottom:2px solid var(--line);margin-bottom:18px}
+.kr{width:clamp(26px,7.4vw,42px);height:clamp(26px,7.4vw,42px);flex:0 0 auto;--flame-o:0;transition:opacity .3s}
+.kr.todo{opacity:.4}
+.kr.cur{transform:translateY(-6px);filter:drop-shadow(0 0 5px rgba(255,183,61,.7))}
+.kr.done{--flame-o:1;animation:bob 3.2s ease-in-out infinite}
+.kr.done:nth-child(2n){animation-delay:-1s}
+.kr.done:nth-child(3n){animation-delay:-2s}
+@keyframes bob{50%{transform:translateY(-3px)}}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,4vw,30px)}
+.qhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tier{font-family:var(--display);font-size:14px;padding:3px 12px;border-radius:999px;background:var(--card2);border:1.5px solid var(--line)}
+.tier.t1{border-color:var(--leaf);color:var(--leaf)}
+.tier.t2{border-color:var(--flame);color:var(--flame)}
+.tier.t3{border-color:var(--lotus);color:var(--lotus)}
+.sentence{font-family:var(--display);font-size:clamp(24px,5.4vw,36px);line-height:1.5;margin:16px 0 24px;text-wrap:balance}
+.blank{display:inline-block;min-width:3.4em;border-bottom:3px dashed var(--flame);margin:0 .12em;text-align:center;color:var(--flame)}
+.blank.filled{border-bottom-style:solid;color:var(--good)}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;font-family:var(--display);font-size:20px;background:var(--card2);border:2px solid var(--line);border-radius:14px;padding:12px 16px;min-height:62px;cursor:pointer;min-width:0;transition:border-color .15s,transform .12s}
+.opt:hover:not([disabled]){border-color:var(--flame);transform:translateY(-1px)}
+.opt .ltr{flex:0 0 32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--flame);font-size:15px}
+.opt .tx{overflow-wrap:anywhere}
+.opt.wrong{border-color:var(--lotus);opacity:.6}
+.opt.wrong .ltr::after{content:"×";position:absolute;opacity:0}
+.opt.right{border-color:var(--good);background:#1b4a52}
+.opt[disabled]{cursor:default}
+
+.fb{margin-top:20px;padding:14px 18px;border-radius:14px;border:1.5px solid var(--line)}
+.fb strong{font-family:var(--display);font-weight:500;display:block;font-size:20px;margin-bottom:2px}
+.fb.ok{border-color:var(--good);background:rgba(143,224,163,.12)}
+.fb.try{border-color:var(--lotus);background:rgba(255,148,173,.12)}
+.fb.reveal{border-color:var(--flame);background:rgba(255,183,61,.12)}
+.say-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.say-row .full{font-family:var(--display);font-size:19px;overflow-wrap:anywhere}
+.say{display:inline-flex;align-items:center;gap:8px;background:var(--flame);color:var(--flame-ink);border:0;border-radius:999px;padding:6px 16px 6px 12px;min-height:40px;cursor:pointer;font-family:var(--display);font-size:16px}
+.say svg{width:22px;height:22px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+
+/* ordering game */
+.meaning{margin-top:14px;font-size:20px}
+.meaning small{display:block;color:var(--muted);font-size:14px;font-family:var(--display)}
+.mini{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:14px 0 6px;font-size:14px;color:var(--muted);font-family:var(--display)}
+.mini .tk{font-size:14px;padding:2px 10px}
+.area-label{font-family:var(--display);font-size:15px;color:var(--muted);margin:16px 0 8px}
+.tray{min-height:92px;border:2.5px dashed var(--line);border-radius:16px;padding:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:rgba(10,18,48,.5);transition:border-color .15s}
+.tray.over{border-color:var(--flame)}
+.tray.done{border-style:solid;border-color:var(--good)}
+.tray .ph{color:var(--muted);font-size:16px}
+.pool{display:flex;flex-wrap:wrap;gap:10px;min-height:68px;padding:12px;border-radius:16px;background:var(--water)}
+.pool.over{outline:2px dashed var(--flame)}
+.chip{font-family:var(--display);font-size:clamp(18px,4.6vw,22px);background:var(--flame);color:var(--flame-ink);border:0;border-radius:12px;padding:8px 16px;min-height:48px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 3px 0 #b87a12}
+.tray .chip{background:#fff1cf;box-shadow:0 3px 0 #bfae82}
+.tray .chip.good{background:#aeeabc;box-shadow:0 3px 0 #5aa970}
+.tray .chip.good::before{content:"✓ "}
+.tray .chip.off{background:#ffc7d3;box-shadow:0 3px 0 #c9758b}
+.tray .chip.off::before{content:"? "}
+.tray.done .chip{background:#aeeabc;box-shadow:0 3px 0 #5aa970}
+.chip.ghost{position:fixed;z-index:999;pointer-events:none;transform:rotate(-3deg) scale(1.06);box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.slot-hint{width:56px;height:48px;border:2px dashed var(--flame);border-radius:12px;background:rgba(255,183,61,.15)}
+body.dragging,body.dragging *{cursor:grabbing!important}
+.extra-note{margin-top:8px;font-size:15px;color:var(--lotus)}
+
+/* summary */
+.sum h2{font-size:clamp(26px,6vw,36px)}
+.sum .river{margin-top:20px}
+.review{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.review li{background:var(--water);border-radius:12px;padding:12px 16px}
+.review .s{font-family:var(--display);font-size:19px;overflow-wrap:anywhere}
+.review .r{color:var(--muted);font-size:15px}
+
+/* teacher key */
+.key h2{font-size:26px;margin-bottom:10px}
+.key ul.notes{margin:10px 0 24px;padding-left:1.2em;color:var(--muted)}
+.key ul.notes li{margin-bottom:6px}
+.key h3{font-size:22px;margin:28px 0 6px;color:var(--flame)}
+.kitem{border-top:1px solid var(--line);padding:16px 0}
+.khead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.khead .num{font-family:var(--display)}
+.ksent{font-family:var(--display);font-size:20px;overflow-wrap:anywhere}
+.ksent b{color:var(--good);font-weight:500}
+.kopts{margin:8px 0;padding-left:1.6em}
+.kopts li{margin-bottom:4px;overflow-wrap:anywhere}
+.kopts li.right{color:var(--good);font-family:var(--display)}
+.kopts .why{color:var(--muted);font-size:15px}
+.knote{color:var(--muted);font-size:16px}
+.kchips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.kchips .tk{font-family:var(--display);font-size:15px}
+.kchips .tk.x{background:transparent;border:1.5px dashed var(--lotus);color:var(--lotus)}
+
+@media (max-width:720px){.hero{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.opts{grid-template-columns:minmax(0,1fr)}.btn{padding:12px 20px}}
+@media (prefers-reduced-motion:reduce){.kr.done{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="krathong" viewBox="0 0 48 48">
+    <path d="M2 35 Q24 51 46 35 Q24 42 2 35Z" style="fill:var(--leaf)"/>
+    <path d="M5 37 Q24 47 43 37" style="fill:none;stroke:#4f9a63;stroke-width:1.5"/>
+    <path d="M24 38 C13 36 8 28 8 21 C16 23 21 29 24 38Z" style="fill:var(--lotus)"/>
+    <path d="M24 38 C35 36 40 28 40 21 C32 23 27 29 24 38Z" style="fill:var(--lotus)"/>
+    <path d="M24 17 C31 24 31 33 24 38 C17 33 17 24 24 17Z" style="fill:#ffc2d0"/>
+    <rect x="22.2" y="17" width="3.6" height="13" rx="1" style="fill:#fdf1d4"/>
+    <g style="opacity:var(--flame-o,1)">
+      <circle cx="24" cy="10.5" r="8" style="fill:var(--flame);opacity:.28"/>
+      <path d="M24 4.5 C27.4 8.5 27.4 12.2 24 14.6 C20.6 12.2 20.6 8.5 24 4.5Z" style="fill:var(--flame)"/>
+    </g>
+  </symbol>
+  <symbol id="spk" viewBox="0 0 24 24">
+    <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/>
+    <path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const L1=[
+{pre:"They",post:"make krathong at home.",opts:[
+ {t:"does not",w:"They คือหลายคน ใช้ does not ไม่ได้ ต้องใช้ do not"},
+ {t:"do not"},
+ {t:"am not",w:"am not ใช้กับ I และไม่ใช้นำหน้ากริยา make"},
+ {t:"not",w:"มีแค่ not ไม่พอ ต้องมี do นำหน้า"}],ans:1,
+ ok:"They ใช้ do not เสมอ แล้วตามด้วยกริยาช่อง 1 (make)"},
+{pre:"She",post:"float a krathong today.",opts:[
+ {t:"do not",w:"She คือคนเดียว (เอกพจน์) ต้องใช้ does not"},
+ {t:"don't",w:"don't ใช้กับ I / You / We / They ส่วน She ใช้ doesn't"},
+ {t:"does not"},
+ {t:"is not",w:"is not ไม่ใช้นำหน้ากริยา float"}],ans:2,
+ ok:"She / He / It ใช้ does not แล้วตามด้วยกริยาช่อง 1 (float)"},
+{pre:"I",post:"like noisy fireworks.",opts:[
+ {t:"do not"},
+ {t:"does not",w:"I ไม่ใช้ does not ต้องใช้ do not"},
+ {t:"is not",w:"I คู่กับ am not และไม่ใช้นำหน้ากริยา like"},
+ {t:"not",w:"ต้องมี do นำหน้า not ก่อน"}],ans:0,
+ ok:"I ใช้ do not (ย่อเป็น don't ได้)"},
+{pre:"My brother",post:"eat spicy food at the festival.",opts:[
+ {t:"don't",w:"My brother คือ he (คนเดียว) ต้องใช้ doesn't"},
+ {t:"do not",w:"My brother คือ he (คนเดียว) ต้องใช้ does not"},
+ {t:"not",w:"ต้องมี do / does นำหน้า not ก่อน"},
+ {t:"doesn't"}],ans:3,
+ ok:"My brother = he จึงใช้ doesn't (does not)"},
+{pre:"The children",post:"throw rubbish in the river.",opts:[
+ {t:"don't"},
+ {t:"doesn't",w:"The children คือหลายคน (they) ต้องใช้ don't"},
+ {t:"does not",w:"The children คือหลายคน (they) ต้องใช้ do not"},
+ {t:"isn't",w:"isn't ไม่ใช้นำหน้ากริยา throw"}],ans:0,
+ ok:"The children = they จึงใช้ don't (do not)"},
+{pre:"My grandma",post:"walk to the river alone.",opts:[
+ {t:"don't",w:"My grandma = she (คนเดียว) ต้องใช้ doesn't"},
+ {t:"do not",w:"My grandma = she (คนเดียว) ต้องใช้ does not"},
+ {t:"doesn't"},
+ {t:"not",w:"ต้องมี do / does นำหน้า not ก่อน"}],ans:2,
+ ok:"My grandma = she จึงใช้ doesn't (does not)"},
+{pre:"Ploy",post:"a big krathong.",opts:[
+ {t:"doesn't makes",w:"หลัง doesn't กริยาต้องไม่เติม s"},
+ {t:"doesn't make"},
+ {t:"don't make",w:"Ploy = she ต้องใช้ doesn't"},
+ {t:"does not makes",w:"หลัง does not กริยาต้องไม่เติม s"}],ans:1,
+ ok:"Ploy = she จึงใช้ doesn't + make (กริยาไม่เติม s)"},
+{pre:"My cousins",post:"candles at home.",opts:[
+ {t:"doesn't light",w:"My cousins = they ต้องใช้ don't"},
+ {t:"don't lights",w:"หลัง don't กริยาต้องไม่เติม s"},
+ {t:"does not light",w:"My cousins = they ต้องใช้ do not"},
+ {t:"don't light"}],ans:3,
+ ok:"My cousins = they จึงใช้ don't + light (กริยาไม่เติม s)"},
+{pre:"Our teacher",post:"us homework on Loy Krathong night.",opts:[
+ {t:"doesn't give"},
+ {t:"don't give",w:"Our teacher คือคนเดียว ต้องใช้ doesn't"},
+ {t:"does not gives",w:"หลัง does not กริยาต้องไม่เติม s"},
+ {t:"doesn't gives",w:"หลัง doesn't กริยาต้องไม่เติม s"}],ans:0,
+ ok:"Our teacher = he / she จึงใช้ doesn't + give (กริยาไม่เติม s)"},
+{pre:"Mali and I",post:"a plastic krathong.",opts:[
+ {t:"does not buy",w:"Mali and I = we (หลายคน) ต้องใช้ do not"},
+ {t:"don't buys",w:"หลัง don't กริยาต้องไม่เติม s"},
+ {t:"do not buy"},
+ {t:"doesn't buy",w:"Mali and I = we (หลายคน) ต้องใช้ do not / don't"}],ans:2,
+ ok:"Mali and I = we จึงใช้ do not + buy (กริยาไม่เติม s)"}
+];
+
+const L2=[
+{words:["I","do not","like","loud","fireworks"],extra:[],th:"ฉันไม่ชอบพลุเสียงดัง",hint:"I ใช้ do not วางหลังประธาน แล้วตามด้วยกริยา like"},
+{words:["She","does not","eat","spicy","food"],extra:[],th:"เธอไม่กินอาหารเผ็ด",hint:"She ใช้ does not แล้วตามด้วยกริยา eat (ไม่เติม s)"},
+{words:["We","don't","throw","rubbish","in","the","river"],extra:[],th:"พวกเราไม่ทิ้งขยะลงในแม่น้ำ",hint:"We ใช้ don't แล้วตามด้วยกริยาช่อง 1 (throw)"},
+{words:["My","mother","doesn't","buy","a","plastic","krathong"],extra:[],th:"แม่ของฉันไม่ซื้อกระทงพลาสติก",hint:"My mother = she จึงใช้ doesn't วางก่อนกริยา buy"},
+{words:["The","children","do not","light","candles","at","school"],extra:[],th:"เด็กๆ ไม่จุดเทียนที่โรงเรียน",hint:"The children = they จึงใช้ do not วางก่อนกริยา light"},
+{words:["Nok","does not","float","her","krathong","in","the","morning"],extra:[],th:"นกไม่ลอยกระทงของเธอในตอนเช้า",hint:"Nok = she จึงใช้ does not วางก่อนกริยา float"},
+{words:["My","grandfather","doesn't","go","to","the","river","at","night"],extra:["don't"],th:"คุณตาของฉันไม่ไปที่แม่น้ำตอนกลางคืน",hint:"My grandfather = he จึงใช้ doesn't (ไม่ใช่ don't)"},
+{words:["Mali","and","Tom","do not","make","krathong","from","plastic"],extra:["does not"],th:"มะลิกับทอมไม่ทำกระทงจากพลาสติก",hint:"Mali and Tom = they จึงใช้ do not (ไม่ใช่ does not)"},
+{words:["The","river","doesn't","look","clean","after","the","festival"],extra:["don't"],th:"แม่น้ำดูไม่สะอาดหลังงานเทศกาล",hint:"The river = it จึงใช้ doesn't (ไม่ใช่ don't)"},
+{words:["My","friends","and","I","don't","use","plastic","bags","at","the","festival"],extra:["doesn't"],th:"ฉันกับเพื่อนๆ ไม่ใช้ถุงพลาสติกในงานเทศกาล",hint:"My friends and I = we จึงใช้ don't (ไม่ใช่ doesn't)"}
+];
+/*END-DATA*/
+
+const TIERS=[
+ {n:"วอร์มอัพ",c:"t1",teacher:"พื้นฐาน (อ่อน)"},
+ {n:"ลุยต่อ",c:"t2",teacher:"กลาง"},
+ {n:"ท้าทาย",c:"t3",teacher:"ท้าทาย (เก่ง)"}
+];
+const tierOf=i=>i<3?TIERS[0]:(i<6?TIERS[1]:TIERS[2]);
+const PRAISE=["เก่งมาก!","ถูกต้อง!","เยี่ยมไปเลย!","สุดยอด!","ใช่เลย!"];
+
+const app=document.getElementById('app');
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+let view='home',S=null,lastSay='';
+
+/* speech */
+const canSpeak=(()=>{try{return 'speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined'}catch(e){return false}})();
+function speak(t){
+  lastSay=t;
+  if(!canSpeak)return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);
+    u.lang='en-US';u.rate=.85;
+    const vs=speechSynthesis.getVoices();
+    const v=vs.find(x=>/^en[-_]US/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));
+    if(v)u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+const sayBtn=()=>canSpeak?`<button type="button" class="say" data-act="say"><svg aria-hidden="true"><use href="#spk"/></svg>ฟังอีกครั้ง</button>`:'';
+
+/* shared pieces */
+function top(){
+  return `<header class="top">
+    <button type="button" class="brand" data-act="home" aria-label="กลับหน้าแรก"><svg class="kr-mark" aria-hidden="true"><use href="#krathong"/></svg><span>Krathong Negatives</span></button>
+    <nav class="nav"><button type="button" class="btn ghost sm" data-act="key">เฉลยสำหรับครู</button></nav>
+  </header>`;
+}
+function river(doneCount,cur){
+  let h='';
+  for(let k=0;k<10;k++){
+    const st=k<doneCount?'done':(k===cur?'cur':'todo');
+    h+=`<svg class="kr ${st}" aria-hidden="true"><use href="#krathong"/></svg>`;
+  }
+  return `<div class="river" role="img" aria-label="ความคืบหน้า ${doneCount} จาก 10 ข้อ">${h}</div>`;
+}
+function shuffle(a){
+  const b=a.slice();
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}
+  return b;
+}
+
+/* home */
+function viewHome(){
+  return top()+`
+  <section class="hero">
+    <div>
+      <h1>ลอยกระทงไปกับประโยคปฏิเสธ</h1>
+      <p class="lead">เกมวอร์มอัพ Present Simple Negative เล่นช้าๆ ได้ ไม่มีจับเวลา ไม่มีอันดับ ตอบผิดลองใหม่ได้เสมอ และทุกข้อจะได้กระทงหนึ่งใบ</p>
+      <div class="pills"><span class="pill">ม.1</span><span class="pill">2 ด่าน</span><span class="pill">ประมาณ 20 นาที</span></div>
+    </div>
+    <svg class="scene" viewBox="0 0 520 240" role="img" aria-label="กระทงลอยอยู่บนแม่น้ำตอนกลางคืน">
+      <circle cx="430" cy="52" r="46" fill="#ffe9b0" opacity=".12"/>
+      <circle cx="430" cy="52" r="26" fill="#ffe9b0" opacity=".92"/>
+      <circle cx="420" cy="46" r="5" fill="#f1d28c" opacity=".7"/>
+      <circle cx="60" cy="40" r="2" fill="#fff6dc"/><circle cx="150" cy="22" r="1.5" fill="#fff6dc"/><circle cx="260" cy="48" r="2" fill="#fff6dc"/><circle cx="340" cy="20" r="1.5" fill="#fff6dc"/>
+      <path d="M0 150 Q65 138 130 150 T260 150 T390 150 T520 150 V240 H0Z" fill="#15224f"/>
+      <path d="M0 182 Q65 170 130 182 T260 182 T390 182 T520 182 V240 H0Z" fill="#1a2a5c"/>
+      <path d="M0 214 Q65 204 130 214 T260 214 T390 214 T520 214 V240 H0Z" fill="#203268"/>
+      <use href="#krathong" x="48" y="112" width="84" height="84" style="--flame-o:1"/>
+      <use href="#krathong" x="196" y="128" width="104" height="104" style="--flame-o:1"/>
+      <use href="#krathong" x="372" y="104" width="76" height="76" style="--flame-o:1"/>
+      <ellipse cx="248" cy="226" rx="60" ry="5" fill="#ffb73d" opacity=".16"/>
+    </svg>
+  </section>
+  <section class="levels">
+    <article class="lvl">
+      <span class="tag">ด่านที่ 1</span>
+      <h2>เลือกคำตอบ</h2>
+      <p>เลือก do not / does not / don't / doesn't ให้ตรงกับประธานของประโยค</p>
+      <p class="meta">10 ข้อ · ประมาณ 10 นาที</p>
+      <button type="button" class="btn primary" data-act="start1">เริ่มด่าน 1</button>
+    </article>
+    <article class="lvl">
+      <span class="tag">ด่านที่ 2</span>
+      <h2>เรียงประโยค</h2>
+      <p>ลากคำมาเรียงเป็นประโยคปฏิเสธ แล้วฟังเสียงอ่านประโยคที่ถูกต้อง</p>
+      <p class="meta">10 ข้อ · ประมาณ 10 นาที</p>
+      <button type="button" class="btn primary" data-act="start2">เริ่มด่าน 2</button>
+    </article>
+  </section>
+  <section>
+    <h2 class="sec-title">สูตรประโยคปฏิเสธ</h2>
+    <div class="formula">
+      <div class="rule">
+        <p class="who">I · You · We · They · ประธานหลายคน</p>
+        <div class="eq"><span class="tk">ประธาน</span><span class="op">+</span><span class="tk neg">do not / don't</span><span class="op">+</span><span class="tk">กริยาช่อง 1</span></div>
+        <p class="eg">We don't throw rubbish.</p>
+      </div>
+      <div class="rule">
+        <p class="who">He · She · It · ประธานคนเดียวหรือสิ่งเดียว</p>
+        <div class="eq"><span class="tk">ประธาน</span><span class="op">+</span><span class="tk neg">does not / doesn't</span><span class="op">+</span><span class="tk">กริยาช่อง 1</span></div>
+        <p class="eg">She doesn't eat spicy food.</p>
+      </div>
+    </div>
+    <p class="note-line">หลัง do not และ does not กริยาไม่เติม s เช่น She does not <b>eat</b> (ไม่ใช่ eats)</p>
+  </section>`;
+}
+
+/* level 1 */
+function newL1(){return {i:0,tries:0,resolved:false,wrong:[],fb:null,review:new Set()}}
+function viewL1(){
+  const q=L1[S.i],t=tierOf(S.i);
+  const blank=S.resolved?`<span class="blank filled">${esc(q.opts[q.ans].t)}</span>`:`<span class="blank">&nbsp;</span>`;
+  const opts=q.opts.map((o,k)=>{
+    let cls='';
+    if(S.wrong.includes(k))cls='wrong';
+    if(S.resolved&&k===q.ans)cls='right';
+    return `<button type="button" class="opt ${cls}" data-act="pick" data-i="${k}" ${(S.resolved||S.wrong.includes(k))?'disabled':''}><span class="ltr">${'ABCD'[k]}</span><span class="tx">${esc(o.t)}</span></button>`;
+  }).join('');
+  const next=S.resolved?`<div class="actions"><button type="button" class="btn primary" data-act="next" data-focus>${S.i<9?'ข้อต่อไป':'ดูสรุป'}</button></div>`:'';
+  return top()+`
+  <div class="lvl-head"><h2>ด่านที่ 1 · เลือกคำตอบ</h2><span class="count">ข้อ ${S.i+1} จาก 10</span></div>
+  ${river(S.i+(S.resolved?1:0),S.resolved?-1:S.i)}
+  <section class="card">
+    <div class="qhead"><span class="tier ${t.c}">${t.n}</span></div>
+    <p class="sentence">${esc(q.pre)} ${blank} ${esc(q.post)}</p>
+    <div class="opts">${opts}</div>
+    ${S.fb?S.fb:''}
+    ${next}
+  </section>`;
+}
+function pickL1(k){
+  const q=L1[S.i];
+  if(S.resolved||S.wrong.includes(k))return;
+  const full=`${q.pre} ${q.opts[q.ans].t} ${q.post}`;
+  if(k===q.ans){
+    S.resolved=true;
+    const p=S.tries>0?'ถูกต้อง! ลองอีกรอบก็ทำได้แล้ว':PRAISE[S.i%PRAISE.length];
+    S.fb=`<div class="fb ok" role="status"><strong>${p}</strong><p>${esc(q.ok)}</p><div class="say-row"><span class="full">${esc(full)}</span>${sayBtn()}</div></div>`;
+    speak(full);
+  }else{
+    S.tries++;S.wrong.push(k);S.review.add(S.i);
+    if(S.tries>=2){
+      S.resolved=true;
+      S.fb=`<div class="fb reveal" role="status"><strong>ข้อนี้หลอกเก่ง ดูคำตอบด้วยกันนะ</strong><p>${esc(q.ok)}</p><div class="say-row"><span class="full">${esc(full)}</span>${sayBtn()}</div></div>`;
+      speak(full);
+    }else{
+      S.fb=`<div class="fb try" role="status"><strong>ยังไม่ใช่ ไม่เป็นไรนะ ลองอีกครั้ง!</strong><p>${esc(q.opts[k].w||'')}</p></div>`;
+    }
+  }
+  S.scrollFb=true;
+  render();
+}
+function nextL1(){
+  if(S.i<9){S.i++;S.tries=0;S.resolved=false;S.wrong=[];S.fb=null;render();window.scrollTo({top:0})}
+  else go('sum1');
+}
+
+/* level 2 */
+function initItem(){
+  const it=L2[S.i];
+  S.chips=it.words.concat(it.extra).map(t=>({t}));
+  const n=S.chips.length;
+  const ids=[...Array(n).keys()];
+  let p;
+  do{p=shuffle(ids)}while(n>1&&p.join()===ids.join());
+  S.pool=p;S.tray=[];S.tries=0;S.resolved=false;S.marks={};S.fb=null;
+  S.dragId=null;S.hintIdx=-1;S.over=null;
+}
+function newL2(){S={i:0,review:new Set()};initItem();return S}
+function chipHtml(id,src){
+  const m=S.marks[id]||'';
+  return `<button type="button" class="chip ${m}" data-chip="${id}" data-src="${src}">${esc(S.chips[id].t)}</button>`;
+}
+function buildHtml(){
+  const it=L2[S.i],n=it.words.length;
+  let trayInner='';
+  const trayIds=S.tray.filter(id=>id!==S.dragId);
+  trayIds.forEach((id,k)=>{
+    if(S.over==='tray'&&S.hintIdx===k)trayInner+='<span class="slot-hint"></span>';
+    trayInner+=chipHtml(id,'tray');
+  });
+  if(S.over==='tray'&&S.hintIdx>=trayIds.length)trayInner+='<span class="slot-hint"></span>';
+  if(!trayInner)trayInner='<span class="ph">วางคำที่นี่ (ลากมาวาง หรือแตะคำก็ได้)</span>';
+  const pool=S.pool.filter(id=>id!==S.dragId).map(id=>chipHtml(id,'pool')).join('');
+  const full=it.words.join(' ')+'.';
+  let ctrl;
+  if(S.resolved){
+    ctrl=`<div class="actions"><button type="button" class="btn primary" data-act="next" data-focus>${S.i<9?'ข้อต่อไป':'ดูสรุป'}</button></div>`;
+  }else{
+    ctrl=`<div class="actions"><button type="button" class="btn primary" data-act="check" ${S.tray.length===n?'':'disabled'}>ตรวจคำตอบ</button><button type="button" class="btn ghost" data-act="reset">เริ่มเรียงใหม่</button></div>`;
+  }
+  const extraNote=it.extra.length?`<p class="extra-note">มีคำที่ไม่ต้องใช้ ${it.extra.length} คำ เลือกให้ถูกนะ</p>`:'';
+  const sayRow=S.resolved?`<div class="say-row"><span class="full">${esc(full)}</span>${sayBtn()}</div>`:'';
+  const fb=S.fb?S.fb.replace('<!--say-->',sayRow):'';
+  return `
+    <p class="area-label">ประโยคของเรา</p>
+    <div class="tray ${S.over==='tray'?'over':''} ${S.resolved?'done':''}" id="tray">${trayInner}</div>
+    ${S.resolved?'':`<p class="area-label">คลังคำศัพท์</p><div class="pool ${S.over==='pool'?'over':''}" id="pool">${pool}</div>${extraNote}`}
+    ${fb}
+    ${ctrl}`;
+}
+function viewL2(){
+  const it=L2[S.i],t=tierOf(S.i);
+  return top()+`
+  <div class="lvl-head"><h2>ด่านที่ 2 · เรียงประโยค</h2><span class="count">ข้อ ${S.i+1} จาก 10</span></div>
+  ${river(S.i+(S.resolved?1:0),S.resolved?-1:S.i)}
+  <section class="card">
+    <div class="qhead"><span class="tier ${t.c}">${t.n}</span></div>
+    <p class="meaning"><small>ความหมาย</small>${esc(it.th)}</p>
+    <div class="mini"><span>โครงสร้าง</span><span class="tk">ประธาน</span><span class="op">+</span><span class="tk neg">do not / does not</span><span class="op">+</span><span class="tk">กริยาช่อง 1</span><span class="op">+</span><span class="tk">ส่วนที่เหลือ</span></div>
+    <div id="build">${buildHtml()}</div>
+  </section>`;
+}
+function renderBuild(){const b=document.getElementById('build');if(b)b.innerHTML=buildHtml()}
+function moveTo(id,dst,idx){
+  S.pool=S.pool.filter(x=>x!==id);
+  S.tray=S.tray.filter(x=>x!==id);
+  if(dst==='tray'){
+    const i=(idx==null||idx<0)?S.tray.length:Math.min(idx,S.tray.length);
+    S.tray.splice(i,0,id);
+  }else S.pool.push(id);
+  S.marks={};
+}
+function tapChip(id){
+  if(S.resolved)return;
+  moveTo(id,S.tray.includes(id)?'pool':'tray');
+  S.fb=null;
+  renderBuild();
+}
+function checkL2(){
+  const it=L2[S.i],n=it.words.length;
+  if(S.tray.length!==n||S.resolved)return;
+  const built=S.tray.map(id=>S.chips[id].t);
+  const ok=built.join(' ')===it.words.join(' ');
+  const full=it.words.join(' ')+'.';
+  S.scrollFb=true;
+  if(ok){
+    S.resolved=true;
+    const p=S.tries>0?'ถูกต้อง! ปรับแล้วสำเร็จ เก่งมาก':PRAISE[S.i%PRAISE.length];
+    S.fb=`<div class="fb ok" role="status"><strong>${p}</strong><p>${esc(it.hint)}</p><!--say--></div>`;
+    speak(full);
+  }else{
+    S.tries++;S.review.add(S.i);
+    S.marks={};
+    S.tray.forEach((id,k)=>{S.marks[id]=(S.chips[id].t===it.words[k])?'good':'off'});
+    if(S.tries===1){
+      S.fb=`<div class="fb try" role="status"><strong>ใกล้แล้ว ลองปรับอีกนิดนะ</strong><p>${esc(it.hint)}</p><p>คำที่มีเครื่องหมาย ✓ อยู่ถูกที่แล้ว</p></div>`;
+    }else if(S.tries===2){
+      S.fb=`<div class="fb try" role="status"><strong>ลองอีกครั้ง เราช่วยใบ้เพิ่ม</strong><p>ประโยคเริ่มต้นด้วย <b>${esc(it.words[0])} ${esc(it.words[1])} …</b></p><p>${esc(it.hint)}</p></div>`;
+    }else{
+      S.resolved=true;
+      S.tray=it.words.map((_,k)=>k);
+      S.pool=it.extra.map((_,k)=>it.words.length+k);
+      S.marks={};
+      S.fb=`<div class="fb reveal" role="status"><strong>ไม่เป็นไร ดูเฉลยด้วยกันนะ</strong><p>${esc(it.hint)}</p><!--say--></div>`;
+      speak(full);
+    }
+  }
+  render();
+}
+function resetL2(){
+  const n=S.chips.length;
+  S.pool=shuffle([...Array(n).keys()]);S.tray=[];S.marks={};S.fb=null;
+  renderBuild();
+}
+function nextL2(){
+  if(S.i<9){S.i++;initItem();render();window.scrollTo({top:0})}
+  else go('sum2');
+}
+
+/* drag and drop */
+let drag=null;
+app.addEventListener('pointerdown',e=>{
+  if(view!=='l2'||S.resolved)return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  const chip=e.target.closest('.chip');
+  if(!chip||chip.classList.contains('ghost'))return;
+  const r=chip.getBoundingClientRect();
+  drag={id:+chip.dataset.chip,src:chip.dataset.src,x0:e.clientX,y0:e.clientY,w:r.width,h:r.height,moved:false,ghost:null,pid:e.pointerId};
+  window.addEventListener('pointermove',onMove);
+  window.addEventListener('pointerup',onUp);
+  window.addEventListener('pointercancel',onCancel);
+});
+function inRect(r,x,y,m){return x>=r.left-m&&x<=r.right+m&&y>=r.top-m&&y<=r.bottom+m}
+function onMove(e){
+  if(!drag||e.pointerId!==drag.pid)return;
+  if(!drag.moved){
+    if(Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)<6)return;
+    drag.moved=true;
+    const g=document.createElement('div');
+    g.className='chip ghost';
+    g.textContent=S.chips[drag.id].t;
+    g.style.minWidth=drag.w+'px';
+    document.body.appendChild(g);
+    drag.ghost=g;
+    document.body.classList.add('dragging');
+    S.dragId=drag.id;
+    renderBuild();
+  }
+  const g=drag.ghost;
+  g.style.left=(e.clientX-g.offsetWidth/2)+'px';
+  g.style.top=(e.clientY-g.offsetHeight/2)+'px';
+  const tray=document.getElementById('tray'),pool=document.getElementById('pool');
+  let over=null,idx=-1;
+  if(tray&&inRect(tray.getBoundingClientRect(),e.clientX,e.clientY,14)){
+    over='tray';
+    idx=0;
+    tray.querySelectorAll('.chip').forEach(c=>{
+      const r=c.getBoundingClientRect();
+      if(e.clientY>r.bottom||(e.clientY>=r.top&&e.clientX>r.left+r.width/2))idx++;
+    });
+  }else if(pool&&inRect(pool.getBoundingClientRect(),e.clientX,e.clientY,14)){
+    over='pool';
+  }
+  if(over!==S.over||idx!==S.hintIdx){S.over=over;S.hintIdx=idx;renderBuild()}
+}
+function endDrag(){
+  window.removeEventListener('pointermove',onMove);
+  window.removeEventListener('pointerup',onUp);
+  window.removeEventListener('pointercancel',onCancel);
+  if(drag&&drag.ghost)drag.ghost.remove();
+  document.body.classList.remove('dragging');
+}
+function onUp(e){
+  if(!drag||e.pointerId!==drag.pid)return;
+  const d=drag;
+  endDrag();
+  drag=null;
+  if(!d.moved){tapChip(d.id);return}
+  const over=S.over,idx=S.hintIdx;
+  S.dragId=null;S.over=null;S.hintIdx=-1;
+  if(over==='tray'){moveTo(d.id,'tray',idx);S.fb=null}
+  else if(over==='pool'){moveTo(d.id,'pool');S.fb=null}
+  renderBuild();
+}
+function onCancel(e){
+  if(!drag||e.pointerId!==drag.pid)return;
+  endDrag();
+  drag=null;
+  S.dragId=null;S.over=null;S.hintIdx=-1;
+  renderBuild();
+}
+
+/* summary */
+function viewSum(n){
+  const items=n===1?L1:L2;
+  const rev=[...S.review].sort((a,b)=>a-b);
+  const lines=rev.map(i=>{
+    if(n===1){const q=L1[i];return `<li><p class="s">${esc(q.pre+' '+q.opts[q.ans].t+' '+q.post)}</p><p class="r">${esc(q.ok)}</p></li>`}
+    const it=L2[i];return `<li><p class="s">${esc(it.words.join(' ')+'.')}</p><p class="r">${esc(it.hint)}</p></li>`;
+  }).join('');
+  const msg=rev.length?`<p style="margin-top:14px">ข้อเหล่านี้ลองอ่านทวนอีกครั้ง แล้วเล่นซ้ำเพื่อให้จำแม่นขึ้น</p><ul class="review">${lines}</ul>`:`<p style="margin-top:14px">ตอบได้ลื่นไหลทุกข้อเลย ลองเล่นอีกรอบเพื่อฝึกให้คล่องกว่าเดิม</p>`;
+  const nextBtn=n===1?`<button type="button" class="btn primary" data-act="start2">ไปด่านที่ 2</button>`:`<button type="button" class="btn primary" data-act="home">กลับหน้าแรก</button>`;
+  return top()+`
+  <section class="card sum">
+    <h2>ลอยกระทงครบ ${items.length} ใบแล้ว</h2>
+    ${river(10,-1)}
+    ${msg}
+    <div class="actions">${nextBtn}<button type="button" class="btn ghost" data-act="${n===1?'start1':'start2'}">เล่นด่านนี้อีกครั้ง</button></div>
+  </section>`;
+}
+
+/* teacher key */
+function viewKey(){
+  const k1=L1.map((q,i)=>{
+    const t=tierOf(i);
+    const li=q.opts.map((o,k)=>k===q.ans?`<li class="right">${esc(o.t)} ✓</li>`:`<li>${esc(o.t)} <span class="why">· ${esc(o.w)}</span></li>`).join('');
+    return `<article class="kitem"><div class="khead"><span class="num">ข้อ ${i+1}</span><span class="tier ${t.c}">${t.teacher}</span></div>
+      <p class="ksent">${esc(q.pre)} <b>${esc(q.opts[q.ans].t)}</b> ${esc(q.post)}</p>
+      <ol class="kopts" type="A">${li}</ol>
+      <p class="knote">เมื่อตอบถูก: ${esc(q.ok)}</p></article>`;
+  }).join('');
+  const k2=L2.map((it,i)=>{
+    const t=tierOf(i);
+    const chips=it.words.map(w=>`<span class="tk">${esc(w)}</span>`).join('')+it.extra.map(w=>`<span class="tk x">${esc(w)} (คำเกิน)</span>`).join('');
+    return `<article class="kitem"><div class="khead"><span class="num">ข้อ ${i+1}</span><span class="tier ${t.c}">${t.teacher}</span></div>
+      <p class="ksent">${esc(it.words.join(' '))}.</p>
+      <p class="knote">ความหมาย: ${esc(it.th)}</p>
+      <div class="kchips">${chips}</div>
+      <p class="knote">คำอธิบาย/คำใบ้: ${esc(it.hint)}</p></article>`;
+  }).join('');
+  return top()+`
+  <section class="key">
+    <h2>เฉลยและคำอธิบายสำหรับครู</h2>
+    <ul class="notes">
+      <li>ระดับความยาก: ข้อ 1-3 พื้นฐาน, ข้อ 4-6 กลาง, ข้อ 7-10 ท้าทาย นักเรียนจะเห็นเป็นชื่อ วอร์มอัพ / ลุยต่อ / ท้าทาย</li>
+      <li>ทุกข้อในด่าน 1 มีคำตอบถูกเพียงข้อเดียว ตัวอย่างเดิมที่ให้ does not และ doesn't พร้อมกันจะถูกทั้งสองข้อ จึงปรับตัวเลือกให้แยกกันชัดเจน</li>
+      <li>ตอบผิดไม่มีการหักคะแนนหรือจัดอันดับ ด่าน 1 ผิดครั้งแรกจะได้เหตุผลของตัวเลือกนั้น ผิดครั้งที่สองจะเฉลยให้เลย ด่าน 2 ผิดครั้งที่ 1 และ 2 ได้คำใบ้ ครั้งที่ 3 เฉลยให้</li>
+      <li>ด่าน 2 ใช้ทั้งชิปแบบ do not / does not และแบบย่อ don't / doesn't ข้อ 7-10 มีคำเกิน 1 คำ</li>
+      <li>เสียงอ่านใช้เสียงภาษาอังกฤษของเครื่องที่เล่น ควรลองกดฟังก่อนใช้กับลำโพงในห้อง</li>
+    </ul>
+    <h3>ด่านที่ 1 · เลือกคำตอบ</h3>${k1}
+    <h3>ด่านที่ 2 · เรียงประโยค</h3>${k2}
+  </section>`;
+}
+
+/* routing */
+function render(){
+  const v={home:viewHome,l1:viewL1,l2:viewL2,sum1:()=>viewSum(1),sum2:()=>viewSum(2),key:viewKey}[view];
+  app.innerHTML=v();
+  const f=app.querySelector('[data-focus]');
+  if(f)f.focus({preventScroll:true});
+  if(S&&S.scrollFb){
+    S.scrollFb=false;
+    const fb=app.querySelector('.fb');
+    if(fb)fb.scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
+}
+function go(v){view=v;render();window.scrollTo({top:0})}
+
+app.addEventListener('click',e=>{
+  const chip=e.target.closest('.chip');
+  if(chip&&view==='l2'){if(e.detail===0)tapChip(+chip.dataset.chip);return}
+  const b=e.target.closest('[data-act]');
+  if(!b||b.disabled)return;
+  switch(b.dataset.act){
+    case 'home':if(canSpeak)try{speechSynthesis.cancel()}catch(x){}S=null;go('home');break;
+    case 'key':go('key');break;
+    case 'start1':S=newL1();go('l1');break;
+    case 'start2':newL2();go('l2');break;
+    case 'pick':pickL1(+b.dataset.i);break;
+    case 'next':view==='l1'?nextL1():nextL2();break;
+    case 'check':checkL2();break;
+    case 'reset':resetL2();break;
+    case 'say':speak(lastSay);break;
+  }
+});
+render();
+</script>
+
+</body>
+</html>
